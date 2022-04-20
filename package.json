@@ -1,0 +1,25 @@
+{
+  "name": "intro_node",
+  "version": "1.0.0",
+  "description": "ceci est une intro à nodejs",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "keywords": [
+    "nodejs"
+  ],
+  "author": "ro",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  },
+  "dependencies": {
+    "axios": "^0.26.1",
+    "ejs": "^3.1.6",
+    "express": "^4.17.3",
+    "promise-mysql": "^5.1.0"
+  }
+}
