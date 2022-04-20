@@ -22,7 +22,7 @@ class ProductModel{
             
         }
     }
-    
+
     static async getOneProduct(id){
         try {
             const q = await db.query('SELECT * FROM orders WHERE orderNumber = ?', [id] );

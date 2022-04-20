@@ -21,7 +21,7 @@ app.set('view engine', "ejs");
 // on établit la connexion à la base de donnée
 mysql.createConnection({
     host: "localhost",
-    database: "intro_fsjs12",
+    database: "intro_sql_fsjs12",
     user: "root",
     password: "",
 }).then(db=>{
@@ -46,7 +46,8 @@ app.get("/", (request, response) => {
     response.render("template", {template: "home", name: data});
 })
 
-app.get("/blog/", (request, response) => {
+
+app.get("/blog", (request, response) => {
     const data = "ro 14";
     // response.json({
     //     status: 200,
