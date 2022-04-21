@@ -5,10 +5,19 @@
 import {fileURLToPath} from "url";
 import path from "path";
 import express from 'express';
-import mysql from 'promise-mysql';
+import mysql from 'mysql';
 import 'dotenv/config';
 
-import productsController from './controllers/products.controller.js';
+// import productsController from './controllers/products.controller.js';
+
+
+let pool = mysql.createPool({
+	connectionLimit: 10000,
+	host: "localhost",
+	user: "root",
+	password: "",
+	database: "intro_sql_fsjs12",
+});
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
@@ -19,28 +28,13 @@ const { HOST_DB, DATABASE_NAME, USERNAME_DB, PASSWORD_DB  } = process.env;
 
 app.use(express.static(path.join(__dirname + '/public')));
 
+app.use(express.json()) // for parsing application/json
+app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
+
 // parametrage du moteur et du dossier de la vue
 app.set('views', "./views");
 app.set('view engine', "ejs");
 
-// on établit la connexion à la base de donnée
-mysql.createConnection({
-    host: HOST_DB,
-    database: DATABASE_NAME,
-    user: USERNAME_DB,
-    password: PASSWORD_DB,
-}).then(db=>{
-    console.log(`connected to : ${db.config.database}`);
-    setInterval(() => {
-        let test = db.query("SELECT 1");
-    }, 10000);
-
-    // on appelle la tour de controle en transmettant les infos de la BDD(db) et la variable qui contient les methodes d'express
-    productsController(app, db);
-
-}).catch(err => {
-    console.log(err);
-})
 
 app.get("/", (request, response) => {
     const data = "ro 14";
@@ -48,17 +42,26 @@ app.get("/", (request, response) => {
     //     status: 200,
     //     msg: "Welcome to my app !"
     // })
-    response.render("template", {template: "home", name: data});
+    response.render("layout", {template: "home", name: data});
 })
 
 
-app.get("/blog", (request, response) => {
-    const data = "ro 14";
-    // response.json({
-    //     status: 200,
-    //     msg: "Welcome to my app !"
-    // })
-    response.render("template", {template: "blog", name: data});
+app.get('/form', (req,res)=>{
+    res.render('layout', { template: "form"})
+})
+
+app.post('/form', (req,res)=>{
+    console.log(req.body);
+    pool.query('INSERT INTO products (alias, price, id_category) VALUES (?,?,?)',
+    [req.body.alias, req.body.price, req.body.id_category],
+     (err, result)=>{
+         if(err){
+             console.log(err);
+         }
+        console.log(result);
+        res.redirect('/');
+    })
+
 })
 
 
