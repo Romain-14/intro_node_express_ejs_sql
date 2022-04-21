@@ -6,11 +6,16 @@ import {fileURLToPath} from "url";
 import path from "path";
 import express from 'express';
 import mysql from 'promise-mysql';
+import 'dotenv/config';
+
 import productsController from './controllers/products.controller.js';
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+const PORT = process.env.PORT || process.env.SERVER_LOCAL_PORT;
+const { HOST_DB, DATABASE_NAME, USERNAME_DB, PASSWORD_DB  } = process.env;
 
 app.use(express.static(path.join(__dirname + '/public')));
 
@@ -20,10 +25,10 @@ app.set('view engine', "ejs");
 
 // on établit la connexion à la base de donnée
 mysql.createConnection({
-    host: "localhost",
-    database: "intro_sql_fsjs12",
-    user: "root",
-    password: "",
+    host: HOST_DB,
+    database: DATABASE_NAME,
+    user: USERNAME_DB,
+    password: PASSWORD_DB,
 }).then(db=>{
     console.log(`connected to : ${db.config.database}`);
     setInterval(() => {
@@ -56,7 +61,6 @@ app.get("/blog", (request, response) => {
     response.render("template", {template: "blog", name: data});
 })
 
-const PORT = 9000;
 
 app.listen(PORT, ()=>{
     console.log(`listening at : http://localhost:${PORT}`);
